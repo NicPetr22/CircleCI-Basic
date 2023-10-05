@@ -1,0 +1,41 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: ubuntu:latest 
+    steps:
+      - checkout 
+      - run:
+          name: Print "Hello, world"
+          command: echo "Hello, world"
+      - run:
+          name: List all files in the current directory
+          command: ls -la
+      - run:
+          name: Create example.txt
+          command: echo "This is an example text." > example.txt
+      - run:
+          name: Cat example.txt
+          command: cat example.txt
+      - run:
+          name: Install Zip and Unzip
+          command: |
+            apt-get update
+            apt-get install -y zip unzip
+      - run:
+          name: Create Zip archive
+          command: zip artifact.zip example.txt
+      - store_artifacts:
+          path: artifact.zip
+          destination: /
+      - run:
+          name: Unzip and list components
+          command: unzip -l artifact.zip
+      - run:
+          name: Clean up
+          command: rm -f example.txt artifact.zip
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
